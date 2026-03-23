@@ -70,7 +70,7 @@ async def validation_exception_handler(
     )
 
 
-@app.post("/api/v1/telemetry/", status_code=status.HTTP_202_ACCEPTED)
+@app.post("/api/v1/telemetry", status_code=status.HTTP_202_ACCEPTED)
 async def ingest_telemetry(
     request: Request,
     x_device_serial_number: str = Header(..., alias="X-Device-Serial-Number"),
