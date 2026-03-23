@@ -1,1 +1,7 @@
-# Add your dependencies here
+fastapi[standart]>=0.135.0,<0.136.0
+uvicorn[standart]>=0.41.0
+pydantic>=2.12
+httpx>=0.28.0
+pytest>=9.0.0
+
+git+https://github.com/IoT-Hub-Alpha/kafka-consumer-producer-lib.git@v1.0
