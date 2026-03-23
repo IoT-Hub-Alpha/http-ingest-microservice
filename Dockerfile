@@ -15,4 +15,4 @@ COPY . .
 
 EXPOSE 8001
 
-CMD ["sh", "-c", "python", "-m", "uvicorn", "app.core.main:app", "--host", "0.0.0.0", "--port", "8001", "--workers", "${UVICORN_WORKERS:-4}"]
+CMD ["python", "-m", "uvicorn", "app.core.main:app", "--host", "0.0.0.0", "--port", "8001", "--workers", "4"]
