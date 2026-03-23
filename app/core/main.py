@@ -1,9 +1,10 @@
 import hashlib
 import json
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any
 
+from contextlib import asynccontextmanager
 from fastapi import FastAPI, Header, Request, status
 from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError
@@ -13,24 +14,25 @@ from pydantic import ValidationError
 from .kafka_producer import kafka_manager
 from .schemas import TelemetryRequest
 
-app = FastAPI(title="HTTP Ingestion Service")
 
-
-@app.on_event("startup")
-async def startup():
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    print("Connected to Kafka")
     await kafka_manager.start()
 
+    yield
 
-@app.on_event("shutdown")
-async def shutdown():
+    print("Shutting down... Flushing Kafka buffers...")
     await kafka_manager.stop()
+
+
+app = FastAPI(title="HTTP Ingestion Service", lifespan=lifespan)
 
 
 @app.get("/health")
 async def healt_check():
     return {
         "status": "alive",
-        "kafka": "connected" if kafka_manager.producer else "disconnected",
     }
 
 
@@ -106,7 +108,7 @@ async def ingest_telemetry(
         )
 
     request_id = str(uuid.uuid4())
-    received_at = datetime.utcnow().isoformat()
+    received_at = datetime.now(timezone.utc).isoformat()
     events = []
 
     for index, item in enumerate(validated_data.items):
