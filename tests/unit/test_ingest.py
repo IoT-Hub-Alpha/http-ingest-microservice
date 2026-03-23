@@ -1,4 +1,3 @@
-import pytest
 from fastapi.testclient import TestClient
 from unittest.mock import patch, AsyncMock
 
@@ -18,8 +17,16 @@ def test_ingest_telemetry_success(mock_send_batch):
     mock_send_batch.return_value = "telemetry.raw"
 
     payload = [
-        {"schema_version": "1.0", "payload": {"temp": 22}, "serial_number": "TEST-001"},
-        {"schema_version": "1.0", "payload": {"temp": 25}, "serial_number": "TEST-001"},
+        {
+            "schema_version": "1.0",
+            "payload": {"temp": 22},
+            "serial_number": "TEST-001",
+        },
+        {
+            "schema_version": "1.0",
+            "payload": {"temp": 25},
+            "serial_number": "TEST-001",
+        },
     ]
 
     headers = {
