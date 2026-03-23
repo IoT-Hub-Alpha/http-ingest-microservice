@@ -18,7 +18,9 @@ logger = logging.getLogger(__name__)
 class KafkaManager:
     def __init__(self):
         self.producer: IoTKafkaProducer | None = None
-        self.topic = KafkaTopics.telemetry_raw if KafkaTopics else "telemetry.raw"
+        self.topic = (
+            KafkaTopics.telemetry_raw if KafkaTopics else "telemetry.raw"
+        )
 
     async def start(self):
         """Initialize producer on stratup FastAPI."""
@@ -26,7 +28,9 @@ class KafkaManager:
             self.producer = IoTKafkaProducer()
             logger.info("IoTKafkaProducer successfully initialized.")
         else:
-            logger.error("IoTKafkaProducer not found. Check umbrella repo imports.")
+            logger.error(
+                "IoTKafkaProducer not found. Check umbrella repo imports."
+            )
 
     async def stop(self):
         """Graceful Shutdown: safe close all connection."""
@@ -46,9 +50,13 @@ class KafkaManager:
         for event in events:
             device_key = event.get("serial_number", "unknown_device")
             try:
-                self.producer.produce(topic=self.topic, key=device_key, value=event)
+                self.producer.produce(
+                    topic=self.topic, key=device_key, value=event
+                )
             except IoTProducerException as exc:
-                logger.error(f"Failed to enqueue message to Kafka buffer: {exc}")
+                logger.error(
+                    f"Failed to enqueue message to Kafka buffer: {exc}"
+                )
                 raise
 
         return self.topic
