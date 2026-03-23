@@ -27,7 +27,8 @@ class TelemetryRequest(RootModel):
 
         if isinstance(data, list) and len(data) > TELEMETRY_MAX_BATCH_SIZE:
             raise ValueError(
-                f"Batch size exceeds maximum limit of {TELEMETRY_MAX_BATCH_SIZE}"
+                "Batch size exceeds maximum limit of ",
+                TELEMETRY_MAX_BATCH_SIZE,
             )
 
         return data
