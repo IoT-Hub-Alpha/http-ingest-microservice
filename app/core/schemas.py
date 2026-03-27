@@ -6,7 +6,6 @@ TELEMETRY_MAX_BATCH_SIZE = 1000
 
 
 class TelemetryItem(BaseModel):
-    payload: Dict[str, Any]
     timestamp: Optional[str] = None
     schema_version: str
     model_config = {"extra": "allow"}
