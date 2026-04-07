@@ -19,12 +19,12 @@ def test_ingest_telemetry_success(mock_send_batch):
     payload = [
         {
             "schema_version": "1.0",
-            "payload": {"temp": 22},
+            "value": 22,
             "serial_number": "TEST-001",
         },
         {
             "schema_version": "1.0",
-            "payload": {"temp": 25},
+            "value": 25,
             "serial_number": "TEST-001",
         },
     ]
@@ -46,7 +46,7 @@ def test_ingest_telemetry_success(mock_send_batch):
 
 
 def test_ingest_missing_header():
-    payload = [{"schema_version": "1.0", "payload": {"temp": 22}}]
+    payload = [{"schema_version": "1.0", "value": 22}]
 
     response = client.post("/api/v1/telemetry/", json=payload)
 

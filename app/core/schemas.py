@@ -8,7 +8,18 @@ TELEMETRY_MAX_BATCH_SIZE = 1000
 class TelemetryItem(BaseModel):
     timestamp: Optional[str] = None
     schema_version: str
+    value: float | int
+    serial_number: Optional[str] = None
     model_config = {"extra": "allow"}
+
+    @model_validator(mode="before")
+    @classmethod
+    def reject_payload_field(cls, data: Any):
+        if isinstance(data, dict) and "payload" in data:
+            raise ValueError(
+                "payload field is not supported; send value at top level"
+            )
+        return data
 
 
 class TelemetryRequest(RootModel):
