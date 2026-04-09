@@ -31,6 +31,7 @@ def test_ingest_telemetry_success(mock_send_batch):
 
     headers = {
         "X-Device-Serial-Number": "TEST-DEVICE-001",
+        "Device-Token": "SN-001-PWR",
         "Idempotency-Key": "test-key-123",
     }
 
@@ -55,7 +56,10 @@ def test_ingest_missing_header():
 
 
 def test_ingest_empty_batch():
-    headers = {"X-Device-Serial-Number": "TEST-DEVICE-001"}
+    headers = {
+        "X-Device-Serial-Number": "TEST-DEVICE-001",
+        "Device-Token": "SN-001-PWR",
+    }
 
     response = client.post("/api/v1/telemetry/", json=[], headers=headers)
 
