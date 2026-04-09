@@ -10,6 +10,7 @@ class TelemetryItem(BaseModel):
     schema_version: str
     value: float | int
     serial_number: Optional[str] = None
+    device_token: str
     model_config = {"extra": "allow"}
 
     @model_validator(mode="before")

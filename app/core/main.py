@@ -63,11 +63,6 @@ async def validation_exception_handler(
             {"error": "X-Device-Serial-Number header is required"},
             status_code=status.HTTP_400_BAD_REQUEST,
         )
-    if any(err["loc"] == ("header", "device-token") for err in errors):
-        return JSONResponse(
-            {"error": "Device-Token header is required"},
-            status_code=status.HTTP_400_BAD_REQUEST,
-        )
 
     return JSONResponse(
         {"error": "Validation failed", "details": {"errors": errors}},
@@ -79,7 +74,6 @@ async def validation_exception_handler(
 async def ingest_telemetry(
     request: Request,
     x_device_serial_number: str = Header(..., alias="X-Device-Serial-Number"),
-    device_token: str = Header(..., alias="Device-Token"),
     idempotency_key: str = Header(None, alias="Idempotency-Key"),
 ):
     try:
@@ -134,12 +128,12 @@ async def ingest_telemetry(
             {
                 "source": "http",
                 "serial_number": x_device_serial_number,
-                "device_token": device_token,
+                "device_token": item.device_token,
                 "request_id": request_id,
                 "idempotency_key": event_idempotency,
                 "ingest_index": index,
                 "received_at": received_at,
-                "data": item.model_dump(),
+                "data": item.model_dump(exclude={"device_token"}),
             }
         )
 
