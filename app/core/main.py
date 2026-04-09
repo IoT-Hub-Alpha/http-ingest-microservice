@@ -52,13 +52,9 @@ def build_idempotency_key(serial_number: str, payload: Any) -> str:
 
 
 @app.exception_handler(RequestValidationError)
-async def validation_exception_handler(
-    request: Request, exc: RequestValidationError
-):
+async def validation_exception_handler(request: Request, exc: RequestValidationError):
     errors = exc.errors()
-    if any(
-        err["loc"] == ("header", "x-device-serial-number") for err in errors
-    ):
+    if any(err["loc"] == ("header", "x-device-serial-number") for err in errors):
         return JSONResponse(
             {"error": "X-Device-Serial-Number header is required"},
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -97,9 +93,7 @@ async def ingest_telemetry(
             raw_body.pop("ssn", None)
 
     if not idempotency_key:
-        idempotency_key = build_idempotency_key(
-            x_device_serial_number, raw_body
-        )
+        idempotency_key = build_idempotency_key(x_device_serial_number, raw_body)
 
     try:
         validated_data = TelemetryRequest.model_validate(raw_body)
@@ -126,14 +120,13 @@ async def ingest_telemetry(
         )
         events.append(
             {
-                "source": "http",
-                "serial_number": x_device_serial_number,
-                "device_token": item.device_token,
                 "request_id": request_id,
+                "ingest_protocol": "http",
+                "serial_number": x_device_serial_number,
                 "idempotency_key": event_idempotency,
                 "ingest_index": index,
                 "received_at": received_at,
-                "data": item.model_dump(exclude={"device_token"}),
+                "payload": item.model_dump(),
             }
         )
 
